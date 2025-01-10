@@ -41,7 +41,7 @@ public class MovieController {
         
     }
     @CrossOrigin
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Movie> createMovie(@RequestBody Movie movie){
            Movie savedMovie = movieRepository.save(movie);
            return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
