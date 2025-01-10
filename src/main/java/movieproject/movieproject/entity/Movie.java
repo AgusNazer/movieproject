@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "movies")
@@ -28,6 +29,9 @@ public class Movie {
 
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
+    @Version
+   private Integer version = 0;  // Campo de versión para manejo de concurrencia optimista
+
 
     // Getters and Setters
 
@@ -85,6 +89,13 @@ public class Movie {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+    public Integer getVersion() {
+        return version;
+    }
+ 
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
 }

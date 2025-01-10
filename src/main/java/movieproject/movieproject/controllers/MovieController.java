@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.persistence.OptimisticLockException;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,14 +58,19 @@ public class MovieController {
     }
     @CrossOrigin
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie updatedMovie){
-       if(!movieRepository.existsById(id)){
-          return ResponseEntity.notFound().build();
-       }
-       updatedMovie.setId(id);
-       Movie savedMovie = movieRepository.save( updatedMovie);
-       return ResponseEntity.ok(savedMovie);
+public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie updatedMovie){
+    if(!movieRepository.existsById(id)){
+        return ResponseEntity.notFound().build();
     }
+    updatedMovie.setId(id);
+    try {
+        Movie savedMovie = movieRepository.saveAndFlush(updatedMovie);  // Usar saveAndFlush para asegurar la versión
+        return ResponseEntity.ok(savedMovie);
+    } catch (OptimisticLockException e) {
+        // Manejo de la excepción de concurrencia optimista
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);  // O lo que consideres adecuado
+    }
+}
     @CrossOrigin
     @GetMapping("/vote/{id}/{rating}")
     public ResponseEntity<Movie> voteMovie(@PathVariable Long id, @PathVariable double rating){
