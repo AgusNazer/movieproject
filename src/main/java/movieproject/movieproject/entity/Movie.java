@@ -34,6 +34,11 @@ public class Movie {
 
 
     // Getters and Setters
+    public void addRating(double newRating) {
+        // Calculamos la calificación ponderada
+        this.rating = ((this.rating * this.votes) + newRating) / (this.votes + 1);
+        this.votes++;
+    }
 
     public Long getId() {
         return id;
